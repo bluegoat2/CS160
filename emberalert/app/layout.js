@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         <nav className="flex justify-around items-center bg-black h-14 text-white">
           <Link href='/'>Home</Link>
           <Link href='https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs'>Test</Link>
-          <Link href='/about'>About</Link>
+          <Link href='/map'>Map</Link>
         </nav>
         {children}
       </body>
