@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
@@ -16,49 +16,44 @@ function MyComponent() {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries: ["visualization"], // Required for heatmaps
+    libraries: ["visualization"],
   });
 
   const mapRef = useRef(null);
   const [heatmap, setHeatmap] = useState(null);
 
+  const loadHeatmap = async (mapInstance) => {
+    try {
+      const res = await fetch("/api/wildfires");
+      const data = await res.json();
+
+      const heatmapData = data.map((point) => ({
+        location: new window.google.maps.LatLng(point.latitude, point.longitude),
+        weight: point.bright_ti4,
+      }));
+
+      console.log("🔥 Heatmap data preview:", heatmapData);
+
+      const heatmapLayer = new window.google.maps.visualization.HeatmapLayer({
+        data: heatmapData,
+        radius: 20,
+      });
+
+      heatmapLayer.setMap(mapInstance);
+      setHeatmap(heatmapLayer);
+    } catch (err) {
+      console.error("Error loading heatmap data:", err);
+    }
+  };
+
   const onLoad = useCallback((map) => {
     mapRef.current = map;
+    loadHeatmap(map); // 🔥 Load heatmap immediately after map loads
   }, []);
 
   const onUnmount = useCallback(() => {
     mapRef.current = null;
   }, []);
-
-  useEffect(() => {
-    const loadHeatmap = async () => {
-      try {
-        const res = await fetch("/api/wildfires"); // Uses route.js proxy
-        const data = await res.json();
-
-        const heatmapData = data.map((point) => {
-          return {
-            location: new window.google.maps.LatLng(point.latitude, point.longitude),
-            weight: point.bright_ti4,
-          };
-        });
-
-        const heatmapLayer = new window.google.maps.visualization.HeatmapLayer({
-          data: heatmapData,
-          radius: 20,
-        });
-
-        heatmapLayer.setMap(mapRef.current);
-        setHeatmap(heatmapLayer);
-      } catch (err) {
-        console.error("Error loading heatmap data:", err);
-      }
-    };
-
-    if (isLoaded && mapRef.current) {
-      loadHeatmap();
-    }
-  }, [isLoaded]);
 
   return isLoaded ? (
     <GoogleMap
@@ -74,4 +69,3 @@ function MyComponent() {
 }
 
 export default React.memo(MyComponent);
-
