@@ -24,11 +24,16 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <nav className="flex justify-around items-center bg-black h-14 text-white">
-          <Link href='/'>Home</Link>
-          <Link href='https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs'>Test</Link>
-          <Link href='/map'>Map</Link>
+          <Link href="/">Home</Link>
+	  <Link href="/map">Map</Link>
+          <Link href="/impact">Impact</Link>
+          <Link href="/top5">Top 5 Wildfires</Link>
         </nav>
-        {children}
+
+        {/* Main Content */}
+        <div className="mt-4">
+          {children} {/* This renders the content from page.js for the current route */}
+        </div>
       </body>
     </html>
   );
