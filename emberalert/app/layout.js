@@ -27,6 +27,7 @@ export default function RootLayout({ children }) {
           <Link href="/" className="hover:text-gray-300 transition">Home</Link>
           <Link href="/map/wildfires" className="hover:text-red-400 transition">Wildfire Map</Link>
           <Link href="/map/airquality" className="hover:text-green-400 transition">Air Quality Map</Link>
+          <Link href="/news" className="hover:text-purple-400 transition">Wildfire News</Link>
         </nav>
         <main>{children}</main>
       </body>
