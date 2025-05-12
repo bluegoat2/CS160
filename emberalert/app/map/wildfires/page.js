@@ -4,11 +4,12 @@ import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = { width: "100vw", height: "100vh" };
 const center = { lat: 37.7749, lng: -122.4194 };
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function WildfireMap() {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script", 
-    googleMapsApiKey: "AIzaSyBoknMY4zq7KkklMACakmp4CvZYSj_jaSE",
+    googleMapsApiKey: apiKey,
     libraries: ["visualization"], 
   });
   
