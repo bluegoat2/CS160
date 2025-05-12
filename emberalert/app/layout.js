@@ -27,9 +27,10 @@ export default function RootLayout({ children }) {
           <Link href="/" className="hover:text-gray-300 transition">Home</Link>
           <Link href="/map/wildfires" className="hover:text-red-400 transition">Wildfire Map</Link>
           <Link href="/map/airquality" className="hover:text-green-400 transition">Air Quality Map</Link>
-          <Link href="/news" className="hover:text-purple-400 transition">Wildfire News</Link>
+          <Link href="/news" className="hover:text-orange-400 transition">Wildfire News</Link>
           <Link href="/impact" className="hover:text-blue-400 transition">Impact</Link>
           <Link href="/top5" className="hover:text-pink-400 transition">Top 5 Wildfires</Link>
+          <Link href="/evacuation" className="hover:text-purple-400 transition">Evacuation Resources</Link>
         </nav>
         <main>{children}</main>
       </body>
