@@ -24,11 +24,15 @@ export default function AirQualityMap() {
     libraries,
   });
 
+
   const mapRef = useRef(null);
   const [aqi, setAqi] = useState(null);
   const [heatmapOn, setHeatmapOn] = useState(true);
+  const [userLocation, setUserLocation] = useState(center); // fallback to LA
 
-  const fetchAQIData = async () => {
+
+
+  const fetchAQIData = async (locationCoords) => {
     try {
       const response = await fetch(
         `https://airquality.googleapis.com/v1/currentConditions:lookup?key=${apiKey}`,
@@ -37,15 +41,15 @@ export default function AirQualityMap() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             location: {
-              latitude: center.lat,
-              longitude: center.lng,
+              latitude: locationCoords.lat,
+              longitude: locationCoords.lng,
             },
           }),
         }
       );
-
+  
       const data = await response.json();
-      const index = data?.indexes?.[0]; // ✅ FIXED path
+      const index = data?.indexes?.[0];
       if (index?.aqi) {
         setAqi(index);
       } else {
@@ -56,12 +60,27 @@ export default function AirQualityMap() {
       console.error("Failed to fetch AQI:", err);
     }
   };
+  
 
   useEffect(() => {
     if (isLoaded) {
-      fetchAQIData();
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(coords);
+          fetchAQIData(coords);
+        },
+        (error) => {
+          console.warn("Geolocation failed or blocked. Using default.", error);
+          fetchAQIData(center);
+        }
+      );
     }
   }, [isLoaded]);
+  
 
   const onLoad = (map) => {
     mapRef.current = map;
@@ -88,7 +107,7 @@ export default function AirQualityMap() {
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={center}
+        center={userLocation}
         zoom={6}
         onLoad={onLoad}
       />
