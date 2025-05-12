@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100vw",
   height: "100vh",
 };
 
+// Los Angeles — consistent AQI data
 const center = {
   lat: 34.0522,
   lng: -118.2437,
@@ -45,9 +43,9 @@ export default function AirQualityMap() {
           }),
         }
       );
-  
+
       const data = await response.json();
-      const index = data?.indexes?.[0]; // ✅ FIXED
+      const index = data?.indexes?.[0]; // ✅ FIXED path
       if (index?.aqi) {
         setAqi(index);
       } else {
@@ -58,7 +56,6 @@ export default function AirQualityMap() {
       console.error("Failed to fetch AQI:", err);
     }
   };
-  
 
   useEffect(() => {
     if (isLoaded) {
@@ -84,9 +81,7 @@ export default function AirQualityMap() {
   };
 
   const rgbColor = aqi
-    ? `rgb(${aqi.color.red * 255}, ${aqi.color.green * 255}, ${
-        aqi.color.blue * 255
-      })`
+    ? `rgb(${aqi.color.red * 255}, ${aqi.color.green * 255}, ${aqi.color.blue * 255})`
     : "#ccc";
 
   return isLoaded ? (
@@ -94,91 +89,83 @@ export default function AirQualityMap() {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={4}
+        zoom={6}
         onLoad={onLoad}
       />
 
-      {/* AQI UI Box */}
+      {/* AQI Info Box */}
       <div
         style={{
           position: "absolute",
           top: "1rem",
           left: "1rem",
-          backgroundColor: "white",
-          padding: "1rem",
-          borderRadius: "12px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+          backgroundColor: "#fff",
+          padding: "1.25rem",
+          borderRadius: "16px",
+          boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
           zIndex: 1000,
-          width: "280px",
-          fontFamily: "Arial, sans-serif",
+          width: "300px",
+          fontFamily: "Segoe UI, Arial, sans-serif",
+          color: "#222",
         }}
       >
-        <div style={{ display: "flex", borderBottom: "1px solid #eee" }}>
-          <div style={{ flex: 1, fontWeight: 600, padding: "0.5rem" }}>
+        {/* Tabs */}
+        <div style={{ display: "flex", borderBottom: "1px solid #eee", marginBottom: "1rem" }}>
+          <div style={{ flex: 1, fontWeight: 700, color: "#000", padding: "0.5rem" }}>
             Universal AQI
           </div>
-          <div
-            style={{
-              flex: 1,
-              fontWeight: 500,
-              padding: "0.5rem",
-              color: "#999",
-            }}
-          >
+          <div style={{ flex: 1, fontWeight: 500, padding: "0.5rem", color: "#999" }}>
             AQI (US)
           </div>
         </div>
 
-        <div
-          style={{
-            marginTop: "1rem",
-            textAlign: "center",
-          }}
-        >
+        {/* AQI Circle */}
+        <div style={{ textAlign: "center" }}>
           <div
             style={{
               width: "80px",
               height: "80px",
               borderRadius: "50%",
-              backgroundColor: "#f4f4f4",
+              backgroundColor: "#f5f5f5",
               border: `6px solid ${rgbColor}`,
               margin: "0 auto",
               lineHeight: "68px",
               fontSize: "1.5rem",
-              fontWeight: "bold",
+              fontWeight: 600,
+              color: "#111",
             }}
           >
             {aqi ? aqi.aqiDisplay : "--"}
           </div>
 
-          <p style={{ fontWeight: 600, marginTop: "0.5rem" }}>
+          <p style={{ fontWeight: 600, marginTop: "0.75rem", color: "#333", fontSize: "1rem" }}>
             {aqi ? aqi.category : "Loading..."}
           </p>
 
-          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+          <p style={{ fontSize: "0.9rem", color: "#444", marginTop: "0.25rem" }}>
             Dominant pollutant:{" "}
             <span style={{ fontWeight: 500 }}>{aqi?.dominantPollutant || "--"}</span>
           </p>
         </div>
 
-        <hr style={{ margin: "1rem 0" }} />
+        <hr style={{ margin: "1rem 0", borderColor: "#ddd" }} />
 
-        <div style={{ fontSize: "0.85rem", fontWeight: 500 }}>
-          Heatmap
-          <label style={{ float: "right" }}>
-            <input
-              type="checkbox"
-              checked={heatmapOn}
-              onChange={() => setHeatmapOn(!heatmapOn)}
-            />
-          </label>
+        {/* Heatmap Toggle */}
+        <div style={{ fontSize: "0.9rem", fontWeight: 500, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span>Heatmap</span>
+          <input
+            type="checkbox"
+            checked={heatmapOn}
+            onChange={() => setHeatmapOn(!heatmapOn)}
+          />
         </div>
+
+        {/* Gradient Legend */}
         <div
           style={{
-            marginTop: "0.5rem",
+            marginTop: "0.75rem",
             height: "10px",
-            background:
-              "linear-gradient(to right, #d73027, #ffffbf, #1a9850)",
+            background: "linear-gradient(to right, #d73027, #ffffbf, #1a9850)",
             borderRadius: "5px",
           }}
         ></div>
@@ -186,9 +173,9 @@ export default function AirQualityMap() {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            fontSize: "0.7rem",
+            fontSize: "0.75rem",
             marginTop: "0.25rem",
-            color: "#555",
+            color: "#666",
           }}
         >
           <span>Poor</span>
